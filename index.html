@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>LFJC Online Exam</title>
+<style>
+/* ===== BASE STYLES ===== */
+:root {
+  --primary-color: #4B0082;
+  --secondary-color: #D8BFD8;
+  --light-purple: #E6E6FA;
+  --white: #fff;
+  --black: #000;
+  --success: #32CD32;
+  --warning: #ff9900;
+  --danger: #ff6666;
+  --shadow: 0 5px 15px rgba(0,0,0,0.1);
+  --transition: all 0.3s ease;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+body {
+  font-family: "SF Pro Display", Arial, sans-serif;
+  margin: 0;
+  background: var(--white);
+  color: var(--black);
+  line-height: 1.6;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* ===== SECURITY OVERLAY ===== */
+#securityOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.95);
+  color: white;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 100000;
+  font-size: 24px;
+  text-align: center;
+}
+
+#securityMessage {
+  background: red;
+  padding: 30px;
+  border-radius: 10px;
+  border: 3px solid white;
+}
+
+#violationCount {
+  font-weight: bold;
+  color: yellow;
+  font-size: 28px;
+}
+
+/* ===== ANTI-CLICKJACKING ===== */
+#clickjackProtect {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  z-index: 99999;
+  pointer-events: none;
+}
+
+/* ===== HEADER & FOOTER ===== */
+header {
+  background: linear-gradient(145deg, var(--light-purple), var(--secondary-color));
+  color: var(--primary-color);
+  text-align: center;
+  padding: 20px;
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  box-shadow: var(--shadow);
+  text-shadow: 0 1px 2px var(--white);
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+footer {
+  background: var(--light-purple);
+  color: var(--primary-color);
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* ===== STUDENT ENTRY SECTION ===== */
+#studentEntry {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 140px);
+  padding: 16px;
+  text-align: center;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 60px;
+  width: 100%;
+  max-width: 500px;
+}
+
+.form-group label {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-right: 10px;
+  color: var(--primary-color);
+  width: 180px;
+  text-align: right;
+}
+
+input[type="text"] {
+  padding: 12px 14px;
+  font-size: 1.1rem;
+  border-radius: 10px;
+  border: 1.5px solid var(--primary-color);
+  outline: none;
+  min-width: 250px;
+  transition: var(--transition);
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+input[type="text"]:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(75, 0, 130, 0.2);
+}
+
+input.error {
+  animation: glowRed 0.5s alternate infinite;
+  border-color: var(--danger);
+}
+
+@keyframes glowRed {
+  0% { box-shadow: 0 0 5px var(--danger); }
+  100% { box-shadow: 0 0 15px var(--danger); }
+}
+
+/* ===== BUTTON STYLES ===== */
+button {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  border: none;
+  border-radius: 12px;
+  transition: var(--transition);
+  box-shadow: 0 6px #aaa;
+  background: linear-gradient(to bottom, #fafaff, #dcd6f7);
+  color: var(--primary-color);
+  font-weight: 600;
+  padding: 12px 24px;
+  font-size: 18px;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px rgba(0,0,0,.28);
+}
+
+button:active {
+  transform: translateY(3px) scale(.98);
+}
+
+.optBtn {
+  font-size: 16px;
+  padding: 8px 18px;
+  margin: 6px;
+  border: 2px solid var(--primary-color);
+  background: var(--white);
+  border-radius: 8px;
+  box-shadow: 0 5px #aaa;
+}
+
+.optBtn.selected {
+  background: var(--success);
+  color: var(--white);
+  border-color: #2fa92f;
+}
+
+.navContainer {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 10px 0;
+  flex-wrap: wrap;
+}
+
+.navBtn {
+  font-size: 16px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  color: var(--white);
+  font-weight: bold;
+  cursor: pointer;
+  background: linear-gradient(145deg, #1E90FF, #4682B4);
+}
+
+#markReviewBtn {
+  background: linear-gradient(145deg, #ffb84d, var(--warning));
+}
+
+#submitBtn {
+  background: linear-gradient(145deg, #c8b88a, #b49e60);
+}
+
+/* ===== TIMER STYLES ===== */
+#timerEl {
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--primary-color);
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: #f0f0ff;
+  display: inline-block;
+  transition: var(--transition);
+}
+
+#timerEl.blink {
+  animation: blinkTimer 1s infinite;
+}
+
+@keyframes blinkTimer {
+  0% { background: var(--danger); color: var(--white); }
+  50% { background: var(--white); color: var(--primary-color); }
+  100% { background: var(--danger); color: var(--white); }
+}
+
+/* ===== PALETTE STYLES ===== */
+#paletteContainer button {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 14px;
+  margin: 3px;
+  border: 1px solid var(--primary-color);
+  background: var(--light-purple);
+  color: var(--primary-color);
+}
+
+#paletteContainer button.selected {
+  background: var(--success);
+  color: var(--white);
+  border-color: #2fa92f;
+}
+
+#paletteContainer button.reviewed {
+  background: yellow;
+  color: var(--black);
+}
+
+#paletteContainer button.current {
+  border: 3px solid red;
+}
+
+/* ===== EXAM AREA STYLES ===== */
+#examArea {
+  padding: 16px;
+  text-align: center;
+  display: none;
+}
+
+#examHeader {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+#stuInfo {
+  flex: 0 0 auto;
+  text-align: left;
+  white-space: nowrap;
+}
+
+#stuQInfo {
+  flex: 1;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.sectionTitle {
+  font-size: 22px;
+  color: var(--primary-color);
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+img.questionImg {
+  max-width: 100%;
+  max-height: 500px;
+  border-radius: 10px;
+  border: 2px solid var(--primary-color);
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+.question-error {
+  color: var(--danger);
+  font-size: 18px;
+  padding: 20px;
+  background: #ffe6e6;
+  border-radius: 10px;
+  margin: 20px 0;
+}
+
+/* ===== ANIMATIONS ===== */
+.glow {
+  animation: glowPulse 1.6s infinite alternate;
+  box-shadow: 0 8px 18px rgba(75,0,130,0.12);
+}
+
+@keyframes glowPulse {
+  0% { box-shadow: 0 6px 10px rgba(75,0,130,0.06); transform: translateY(0); }
+  50% { box-shadow: 0 12px 30px rgba(75,0,130,0.14); transform: translateY(-2px); }
+  100% { box-shadow: 0 6px 10px rgba(75,0,130,0.06); transform: translateY(0); }
+}
+
+/* ===== SECURITY OVERLAY STYLES ===== */
+#fullRedOverlay {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  background: red;
+  z-index: 9999;
+  pointer-events: auto;
+}
+
+#accessDeniedBox {
+  position: fixed;
+  left: 50%;
+  top: 40%;
+  transform: translate(-50%, -50%);
+  z-index: 10000;
+  color: var(--white);
+  text-align: center;
+  display: none;
+  pointer-events: auto;
+}
+
+#accessDeniedBox h1 {
+  font-size: 48px;
+  font-weight: 900;
+  margin: 0 0 18px 0;
+  color: var(--white);
+  text-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+#callAdminBtn {
+  padding: 12px 22px;
+  border-radius: 12px;
+  font-weight: 800;
+}
+
+/* ===== MODAL STYLES ===== */
+.confirmModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.45);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+}
+
+.confirmBox {
+  background: var(--white);
+  padding: 20px;
+  border-radius: 12px;
+  min-width: 280px;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.confirmBox p {
+  font-size: 18px;
+  color: var(--primary-color);
+  margin-bottom: 15px;
+}
+
+.confirmBox button {
+  margin: 0 10px;
+  padding: 8px 16px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#adminPassModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 20000;
+}
+
+#adminPassBox {
+  background: var(--white);
+  padding: 20px;
+  text-align: center;
+  width: 260px;
+  border-radius: 12px;
+}
+
+#adminPassBox input {
+  width: 90%;
+  padding: 10px;
+  border: 1px solid var(--primary-color);
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+/* ===== TIMER WARNING STYLES ===== */
+.blinkLine {
+  animation: blinkLineAnim 1s infinite;
+}
+
+@keyframes blinkLineAnim {
+  0% { background: #ffcccc; }
+  50% { background: var(--white); }
+  100% { background: #ffcccc; }
+}
+
+/* ===== FONT SIZE ADJUSTMENTS ===== */
+#stuInfo, #stuQInfo, #timerEl {
+  font-size: 20px !important;
+}
+
+/* Increase table row height vertically */
+table td, table th {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+/* ===== RESPONSIVE STYLES ===== */
+@media (max-width: 600px) {
+  #accessDeniedBox h1 {
+    font-size: 28px;
+  }
+  
+  #callAdminBtn {
+    padding: 10px 14px;
+  }
+  
+  .form-group {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .form-group label {
+    text-align: left;
+    width: auto;
+    margin-bottom: 5px;
+  }
+  
+  #examHeader {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  #stuInfo, #stuQInfo {
+    text-align: center;
+  }
+  
+  .navContainer {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .navBtn {
+    width: 80%;
+    margin-bottom: 10px;
+  }
+  
+  #paletteContainer {
+    grid-template-columns: repeat(10, 1fr) !important;
+  }
+}
+
+/* ===== GOOGLE SHEET STATUS STYLES ===== */
+#sheetStatus {
+  margin-top: 10px;
+  padding: 8px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+#sheetStatus.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+#sheetStatus.error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+#sheetStatus.info {
+  background-color: #d1ecf1;
+  color: #0c5460;
+  border: 1px solid #bee5eb;
+}
+
+/* ===== RESULTS TABLE STYLES ===== */
+.results-table {
+  width: 100%;
+  max-width: 900px;
+  margin: 20px auto;
+  border-collapse: collapse;
+  font-size: 18px;
+  text-align: center;
+}
+
+.results-table th {
+  background: #E6E6FA;
+  padding: 15px;
+  border: 1px solid var(--primary-color);
+}
+
+.results-table td {
+  padding: 15px;
+  border: 1px solid var(--primary-color);
+}
+
+.results-table tr:nth-child(even) {
+  background: #f9f9f9;
+}
+
+.results-table tr:hover {
+  background: #f0f0ff;
+}
+
+/* ===== DEBUG PANEL STYLES ===== */
+#debugPanel {
+  position: fixed;
+  bottom: 40px;
+  right: 10px;
+  background: rgba(0,0,0,0.8);
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  max-width: 300px;
+  z-index: 1000;
+  display: none;
+}
+
+#debugToggle {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  z-index: 1001;
+  background: #333;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<!-- Security Overlay -->
+<div id="securityOverlay">
+  <div id="securityMessage">
+    <h1>🚫 SECURITY VIOLATION DETECTED</h1>
+    <p>Attempt to capture screen detected!</p>
+    <p>Violation Count: <span id="violationCount">0</span></p>
+    <p>This incident has been logged.</p>
+    <p>Exam will be submitted automatically.</p>
+  </div>
+</div>
+
+<!-- Anti-Clickjacking Protection -->
+<div id="clickjackProtect"></div>
+
+<header>LFJC ONLINE EXAMINATION</header>
+
+<div id="studentEntry">
+  <div class="form-group"><label>NAME</label><input type="text" id="stuName" placeholder="Only letters & spaces" autocomplete="off"></div>
+  <div class="form-group"><label>SECTION</label><input type="text" id="stuSection" placeholder="Letters & digits" autocomplete="off"></div>
+  <div class="form-group"><label>ROLL NUMBER</label><input type="text" id="stuRoll" placeholder="Digits only" autocomplete="off"></div>
+  <div class="form-group"><label>ADMISSION NUMBER</label><input type="text" id="stuAdm" placeholder="Digits only" autocomplete="off"></div>
+  <div class="form-group"><button id="stuStartBtn" style="display:none;">Start Exam</button></div>
+  <p id="studentMsg"></p>
+  <p id="keyStatus" style="color:#4B0082;font-weight:600;"></p>
+  <div id="sheetStatus" class="info">Google Sheet integration: Ready - One row per student</div>
+</div>
+
+<div id="examArea" style="display:none;">
+
+  <!-- HEADER FIXED -->
+  <div id="examHeader" style="display:flex;align-items:center;width:100%;font-weight:bold;">
+    <div id="stuInfo" style="flex:0 0 auto;text-align:left; white-space:nowrap;"></div>
+    <div id="stuQInfo" style="flex:1;text-align:center; white-space:nowrap;"></div>
+    <div style="flex:0 0 auto;text-align:right; white-space:nowrap;">
+        <span id="timerEl">🕒 00:00</span>
+    </div>
+  </div>
+
+  <div id="questionContainer" style="text-align:center;margin-top:10px;"></div>
+
+  <div class="navContainer">
+    <button class="navBtn" id="prevBtn">⬅ Previous</button>
+    <button class="navBtn" id="markReviewBtn">Review</button>
+    <button class="navBtn" id="nextBtn">Next ➡</button>
+    <button class="navBtn" id="submitBtn">Submit Exam</button>
+  </div>
+
+  <div id="paletteContainer"></div>
+</div>
+
+<footer>LFJC@2025 All rights reserved</footer>
+
+<div id="fullRedOverlay"></div>
+<div id="accessDeniedBox">
+  <h1>ACCESS DENIED</h1>
+  <button id="callAdminBtn" class="glow">Enter Password</button>
+</div>
+
+<div class="confirmModal" id="confirmModal">
+  <div class="confirmBox">
+    <p id="confirmText">Confirm?</p>
+    <button id="confirmYes">Yes</button>
+    <button id="confirmNo">No</button>
+  </div>
+</div>
+
+<div id="adminPassModal">
+  <div id="adminPassBox">
+    <h3>Enter Admin Password</h3>
+    <input type="password" id="adminPassInput">
+    <br><br>
+    <button id="adminPassSubmit">Submit</button>
+  </div>
+</div>
+
+<!-- Debug Panel -->
+<button id="debugToggle">D</button>
+<div id="debugPanel"></div>
+
+<script>
+// ================= HIGH SECURITY FEATURES =================
+let securityViolations = 0;
+let securityCheckInterval;
+
+// Disable right-click context menu
+document.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+    logSecurityViolation('Right-click attempted');
+    return false;
+});
+
+// Disable text selection
+document.addEventListener('selectstart', function(e) {
+    e.preventDefault();
+    return false;
+});
+
+// Disable drag and drop
+document.addEventListener('dragstart', function(e) {
+    e.preventDefault();
+    return false;
+});
+
+// Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+document.addEventListener('keydown', function(e) {
+    // F12
+    if (e.keyCode === 123) {
+        e.preventDefault();
+        logSecurityViolation('F12 Developer Tools attempted');
+        return false;
+    }
+    // Ctrl+Shift+I
+    if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+        e.preventDefault();
+        logSecurityViolation('Ctrl+Shift+I Developer Tools attempted');
+        return false;
+    }
+    // Ctrl+Shift+J
+    if (e.ctrlKey && e.shiftKey && e.keyCode === 74) {
+        e.preventDefault();
+        logSecurityViolation('Ctrl+Shift+J Developer Tools attempted');
+        return false;
+    }
+    // Ctrl+U
+    if (e.ctrlKey && e.keyCode === 85) {
+        e.preventDefault();
+        logSecurityViolation('Ctrl+U View Source attempted');
+        return false;
+    }
+    // Ctrl+Shift+C
+    if (e.ctrlKey && e.shiftKey && e.keyCode === 67) {
+        e.preventDefault();
+        logSecurityViolation('Ctrl+Shift+C Inspect attempted');
+        return false;
+    }
+});
+
+// Detect print screen and snipping tool
+document.addEventListener('keyup', function(e) {
+    // Print Screen key
+    if (e.keyCode === 44) {
+        logSecurityViolation('Print Screen attempted');
+    }
+});
+
+// Detect window resize (common when developer tools open)
+let windowWidth = window.innerWidth;
+let windowHeight = window.innerHeight;
+
+window.addEventListener('resize', function() {
+    if (window.innerWidth !== windowWidth || window.innerHeight !== windowHeight) {
+        logSecurityViolation('Window resize detected - possible developer tools');
+    }
+});
+
+// Detect blur/focus loss (tab switching)
+window.addEventListener('blur', function() {
+    if (progress && progress.timeLeftSec > 0) {
+        logSecurityViolation('Window/tab switch detected');
+    }
+});
+
+// Detect iframe embedding (clickjacking protection)
+if (window.location !== window.parent.location) {
+    document.body.innerHTML = '<h1 style="color:red;text-align:center;margin-top:100px;">SECURITY VIOLATION: This page cannot be embedded in frames</h1>';
+    throw new Error('Frame embedding detected');
+}
+
+// Screenshot detection using canvas fingerprinting
+function detectScreenshotAttempt() {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = 1;
+    canvas.height = 1;
+    
+    try {
+        ctx.fillStyle = 'red';
+        ctx.fillRect(0, 0, 1, 1);
+        const imageData = ctx.getImageData(0, 0, 1, 1);
+        
+        // Some screenshot tools modify canvas behavior
+        if (imageData.data[0] !== 255) {
+            logSecurityViolation('Canvas manipulation detected - possible screenshot tool');
+        }
+    } catch (e) {
+        logSecurityViolation('Canvas access blocked - possible security tool');
+    }
+}
+
+// Continuous security monitoring
+function startSecurityMonitoring() {
+    securityCheckInterval = setInterval(() => {
+        // Check if developer tools is open
+        const devToolsOpened = checkDevTools();
+        if (devToolsOpened) {
+            logSecurityViolation('Developer Tools detected as open');
+        }
+        
+        // Detect common screenshot software processes
+        detectScreenshotAttempt();
+        
+        // Check for browser extensions that might interfere
+        checkBrowserExtensions();
+        
+    }, 2000);
+}
+
+function checkDevTools() {
+    const startTime = performance.now();
+    debugger;
+    const endTime = performance.now();
+    return (endTime - startTime) > 100;
+}
+
+function checkBrowserExtensions() {
+    // Check for common screenshot extensions
+    const suspiciousExtensions = [
+        'screenshot', 'capture', 'snip', 'lightshot',
+        'nimbus', 'awesomescreenshot', 'fireshot'
+    ];
+    
+    const scripts = document.querySelectorAll('script');
+    scripts.forEach(script => {
+        suspiciousExtensions.forEach(ext => {
+            if (script.src.toLowerCase().includes(ext)) {
+                logSecurityViolation('Suspicious extension detected: ' + ext);
+            }
+        });
+    });
+}
+
+function logSecurityViolation(reason) {
+    securityViolations++;
+    document.getElementById('violationCount').textContent = securityViolations;
+    
+    debugLog(`SECURITY VIOLATION: ${reason} - Count: ${securityViolations}`);
+    
+    // Show security overlay after 3 violations
+    if (securityViolations >= 3) {
+        showSecurityOverlay();
+        
+        // Auto-submit exam after 5 seconds
+        setTimeout(() => {
+            if (progress) {
+                submitExam();
+            }
+        }, 5000);
+    }
+    
+    // Send violation to Google Sheets for logging
+    logViolationToSheet(reason);
+}
+
+function showSecurityOverlay() {
+    document.getElementById('securityOverlay').style.display = 'flex';
+}
+
+function logViolationToSheet(reason) {
+    if (!progress) return;
+    
+    const violationData = {
+        name: progress.student.name,
+        section: progress.student.sec,
+        roll: progress.student.roll,
+        adm: progress.student.adm,
+        violation: reason,
+        count: securityViolations,
+        timestamp: new Date().toLocaleString(),
+        userAgent: navigator.userAgent
+    };
+    
+    // Log to debug panel
+    debugLog(`Violation logged: ${JSON.stringify(violationData)}`);
+}
+
+// ================= EXISTING EXAM CODE =================
+const MARK_PER_CORRECT = 1, MARK_PER_WRONG = -0.25;
+
+// DYNAMIC: images and answerKey will be populated from Answers/Key
+let images = [];
+let answerKey = [];
+let keyLoaded = false;
+
+const subjects = ["Maths", "Physics", "Chemistry"];
+
+// Function to update Google Sheet status display
+function updateSheetStatus(message, type) {
+    const statusEl = document.getElementById('sheetStatus');
+    statusEl.textContent = `Google Sheet: ${message}`;
+    statusEl.className = type;
+    
+    // Auto-hide success messages after 5 seconds
+    if (type === 'success') {
+        setTimeout(() => {
+            statusEl.textContent = 'Google Sheet integration: Ready - One row per student';
+            statusEl.className = 'info';
+        }, 5000);
+    }
+}
+
+// Debug logging function
+function debugLog(message) {
+    const debugPanel = document.getElementById('debugPanel');
+    const timestamp = new Date().toLocaleTimeString();
+    debugPanel.innerHTML += `[${timestamp}] ${message}<br>`;
+    debugPanel.scrollTop = debugPanel.scrollHeight;
+}
+
+// Image verification function
+function verifyImagesAccessible() {
+    debugLog('Verifying image accessibility...');
+    if (images.length > 0) {
+        // Test first 5 images
+        for (let i = 0; i < Math.min(5, images.length); i++) {
+            const testImg = new Image();
+            // Capture the current value of i and image path
+            const currentIndex = i;
+            const currentImage = images[i];
+            
+            testImg.onload = function() {
+                debugLog(`✓ Image accessible: ${currentImage} (Q${currentIndex + 1})`);
+            };
+            testImg.onerror = function() {
+                debugLog(`✗ Image missing: ${currentImage} (Q${currentIndex + 1})`);
+            };
+            testImg.src = currentImage;
+        }
+    }
+}
+
+// NEW FUNCTION: Send ALL subjects in ONE request
+function sendAllSubjectsToGoogleSheet(subjData) {
+    const url = "https://script.google.com/macros/s/AKfycbx9KHdqtLLFowT4ecmBxDjyEOKDN8sc9lpvnglTkp_fQivHBWsUH-UWI3e2Kizn231kGg/exec";
+    
+    // Calculate totals
+    let totalCorrect = 0, totalWrong = 0, totalBlank = 0, totalQs = 0;
+    for (let s in subjData) {
+        totalCorrect += subjData[s].correct;
+        totalWrong += subjData[s].wrong;
+        totalBlank += subjData[s].blank;
+        totalQs += subjData[s].total;
+    }
+    let totalPer = totalQs > 0 ? ((totalCorrect / totalQs) * 100).toFixed(2) : 0;
+
+    const payload = {
+        name: progress.student.name,
+        section: progress.student.sec,
+        roll: progress.student.roll,
+        adm: progress.student.adm,
+        timestamp: new Date().toLocaleString(),
+        // Maths data
+        maths_correct: subjData.Maths?.correct || 0,
+        maths_wrong: subjData.Maths?.wrong || 0,
+        maths_blank: subjData.Maths?.blank || 0,
+        maths_total: subjData.Maths?.total || 0,
+        maths_percentage: subjData.Maths ? ((subjData.Maths.correct / subjData.Maths.total) * 100).toFixed(2) : 0,
+        // Physics data
+        physics_correct: subjData.Physics?.correct || 0,
+        physics_wrong: subjData.Physics?.wrong || 0,
+        physics_blank: subjData.Physics?.blank || 0,
+        physics_total: subjData.Physics?.total || 0,
+        physics_percentage: subjData.Physics ? ((subjData.Physics.correct / subjData.Physics.total) * 100).toFixed(2) : 0,
+        // Chemistry data
+        chemistry_correct: subjData.Chemistry?.correct || 0,
+        chemistry_wrong: subjData.Chemistry?.wrong || 0,
+        chemistry_blank: subjData.Chemistry?.blank || 0,
+        chemistry_total: subjData.Chemistry?.total || 0,
+        chemistry_percentage: subjData.Chemistry ? ((subjData.Chemistry.correct / subjData.Chemistry.total) * 100).toFixed(2) : 0,
+        // Totals
+        total_correct: totalCorrect,
+        total_wrong: totalWrong,
+        total_blank: totalBlank,
+        total_questions: totalQs,
+        overall_percentage: totalPer,
+        status: 'Completed'
+    };
+
+    updateSheetStatus("Sending ALL results to Google Sheet...", "info");
+    debugLog("Sending ALL data: " + JSON.stringify(payload));
+
+    const formData = new FormData();
+    for (const key in payload) {
+        formData.append(key, payload[key]);
+    }
+    
+    fetch(url, {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.text())
+    .then(data => {
+        debugLog("Sheet Response: " + data);
+        updateSheetStatus("All results saved successfully in ONE ROW!", "success");
+    })
+    .catch(error => {
+        console.error("Sheet Error:", error);
+        updateSheetStatus("Failed to save results: " + error.message, "error");
+    });
+}
+
+let examData = {files: [], subjectNames: [], keys: []};
+let progress = null, timerInterval = null;
+
+// TEST DATA - Remove this in production and use the fetch below
+function initializeTestData() {
+    // Create test answer key (40 questions) in 5-per-line format
+    // This simulates what your key file should look like
+    const testKeyFormat = [
+        "ABCDA", // Line 1: Q1-A, Q2-B, Q3-C, Q4-D, Q5-A
+        "BCDAB", // Line 2: Q6-B, Q7-C, Q8-D, Q9-A, Q10-B
+        "CDABC", // Line 3: Q11-C, Q12-D, Q13-A, Q14-B, Q15-C
+        "DABCD", // Line 4: Q16-D, Q17-A, Q18-B, Q19-C, Q20-D
+        "ABCDA", // Line 5
+        "BCDAB", // Line 6  
+        "CDABC", // Line 7
+        "DABCD"  // Line 8 (total 40 questions)
+    ].join('\n');
+    
+    // Parse the test format to create answerKey array
+    answerKey = [];
+    testKeyFormat.split('\n').forEach(line => {
+        const cleanLine = line.trim();
+        if (cleanLine.length > 0) {
+            const lineAnswers = cleanLine.split('');
+            const validAnswers = lineAnswers.filter(val => 
+                ['A', 'B', 'C', 'D'].includes(val.toUpperCase())
+            ).map(val => val.toUpperCase());
+            answerKey = answerKey.concat(validAnswers);
+        }
+    });
+    
+    // Create image paths for 1.png, 2.png, etc.
+    images = [];
+    for (let i = 1; i <= answerKey.length; i++) {
+        images.push(`${i}.png`); // This will create 1.png, 2.png, 3.png, etc.
+    }
+
+    // Verify images are accessible
+    verifyImagesAccessible();
+    
+    keyLoaded = true;
+    document.getElementById('keyStatus').textContent = `Test data loaded (${answerKey.length} questions).`;
+    validateStudentInputs();
+    debugLog(`Test data initialized with ${answerKey.length} questions - images: ${images.slice(0, 5).join(', ')}...`);
+    
+    // Also try to load from server
+    loadAnswerKeyFromServer();
+}
+
+// Fetch the answer key file from Answers/Key on page load
+function loadAnswerKeyFromServer() {
+    fetch('Answers/Key')
+      .then(res => {
+        if (!res.ok) throw new Error('Key file not found or not accessible');
+        return res.text();
+      })
+      .then(text => {
+        console.log('Raw key file content:', text);
+        
+        // NEW: Parse 5 answers per line without gaps (e.g., "ABCDA")
+        let answers = [];
+        const lines = text.trim().split('\n');
+        
+        lines.forEach(line => {
+            const cleanLine = line.trim();
+            if (cleanLine.length > 0) {
+                // Split the line into individual characters
+                const lineAnswers = cleanLine.split('');
+                // Filter only valid answer options (A, B, C, D)
+                const validAnswers = lineAnswers.filter(val => 
+                    ['A', 'B', 'C', 'D'].includes(val.toUpperCase())
+                ).map(val => val.toUpperCase());
+                
+                answers = answers.concat(validAnswers);
+            }
+        });
+        
+        console.log('Parsed answers (5 per line):', answers);
+        console.log('Total questions found:', answers.length);
+        
+        if (answers.length === 0) {
+            throw new Error('No valid answers found in key file');
+        }
+        
+        answerKey = answers;
+        
+        // Build image paths as 1.png, 2.png, 3.png, etc.
+        images = [];
+        for (let i = 1; i <= answerKey.length; i++) {
+            images.push(`${i}.png`);
+        }
+
+        // Verify images are accessible
+        verifyImagesAccessible();
+        
+        keyLoaded = true;
+        document.getElementById('keyStatus').textContent = `Answer key loaded (${answerKey.length} questions). Images: 1.png, 2.png, etc.`;
+        validateStudentInputs();
+        debugLog(`Answer key loaded successfully: ${answerKey.length} questions`);
+        debugLog(`Image paths: ${images.slice(0, 5).join(', ')}...`);
+        
+        // Update debug info
+        debugLog(`Answer key format: 5 per line without gaps`);
+        debugLog(`First 10 answers: ${answerKey.slice(0, 10).join(', ')}`);
+        debugLog(`Last 10 answers: ${answerKey.slice(-10).join(', ')}`);
+      })
+      .catch(err => {
+        console.error('Failed to load Answers/Key:', err);
+        debugLog(`Error loading answer key: ${err.message}`);
+        // Keep using test data if server load fails
+        document.getElementById('keyStatus').textContent = 'Using test data - Server key failed to load';
+      });
+}
+// Initialize with test data immediately, then try server
+initializeTestData();
+
+function shuffleArray(arr) {
+    const c = arr.slice();
+    for (let i = c.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [c[i], c[j]] = [c[j], c[i]];
+    }
+    return c;
+}
+
+function prepareExamData() {
+  examData.files = []; examData.subjectNames = []; examData.keys = [];
+  const total = images.length, base = Math.floor(total / 3);
+  let remainder = total % 3, start = 0, groups = [];
+  for (let s = 0; s < 3; s++) {
+    const count = base + (remainder > 0 ? 1 : 0); remainder--;
+    const imgs = images.slice(start, start + count);
+    const keys = answerKey.slice(start, start + count); start += count;
+    const idxs = shuffleArray([...Array(imgs.length).keys()]);
+    groups.push({name: subjects[s], imgs: idxs.map(i => imgs[i]), keys: idxs.map(i => keys[i])});
+  }
+  shuffleArray(groups).forEach(g => g.imgs.forEach((img, i) => {
+    examData.files.push(img);
+    examData.keys.push(g.keys[i]);
+    examData.subjectNames.push(g.name);
+  }));
+  
+  debugLog(`Exam data prepared: ${examData.files.length} questions, Subjects: ${[...new Set(examData.subjectNames)]}`);
+}
+
+function validateStudentInputs() {
+  const n = document.getElementById('stuName'), 
+        s = document.getElementById('stuSection'), 
+        r = document.getElementById('stuRoll'), 
+        a = document.getElementById('stuAdm');
+  let v1 = /^[A-Za-z .]+$/.test(n.value), 
+      v2 = /^[A-Za-z0-9]+$/.test(s.value),
+      v3 = /^[0-9]+$/.test(r.value), 
+      v4 = /^[0-9]+$/.test(a.value);
+  n.classList.toggle('error', !v1 && n.value !== ""); 
+  s.classList.toggle('error', !v2 && s.value !== "");
+  r.classList.toggle('error', !v3 && r.value !== ""); 
+  a.classList.toggle('error', !v4 && a.value !== "");
+  // Only show start when inputs valid AND key loaded
+  const startBtn = document.getElementById('stuStartBtn');
+  startBtn.style.display = (v1 && v2 && v3 && v4 && keyLoaded) ? "inline-block" : "none";
+  return v1 && v2 && v3 && v4 && keyLoaded;
+}
+
+["stuName", "stuSection", "stuRoll", "stuAdm"].forEach(id => document.getElementById(id).addEventListener("input", validateStudentInputs));
+
+function showConfirm(msg, cb) {
+  const confirmText = document.getElementById('confirmText');
+  const confirmModal = document.getElementById('confirmModal');
+  const confirmYes = document.getElementById('confirmYes');
+  const confirmNo = document.getElementById('confirmNo');
+  
+  confirmText.textContent = msg;
+  confirmModal.style.display = "flex";
+  confirmYes.onclick = () => { confirmModal.style.display = "none"; cb(true); };
+  confirmNo.onclick = () => { confirmModal.style.display = "none"; cb(false); };
+}
+
+document.getElementById('stuStartBtn').onclick = () => { 
+  if (!validateStudentInputs()) return; 
+  showConfirm("Start Exam?", startWithSecurity); 
+};
+
+function startWithSecurity(ok) {
+  if (!ok) return;
+  const stuName = document.getElementById('stuName');
+  const stuSection = document.getElementById('stuSection');
+  const stuRoll = document.getElementById('stuRoll');
+  const stuAdm = document.getElementById('stuAdm');
+  
+  const studentKey = `${stuName.value}|${stuSection.value}|${stuRoll.value}|${stuAdm.value}`;
+  const stored = localStorage.getItem(studentKey), now = Date.now();
+  if (stored && now - stored < 86400000) {
+    document.getElementById('fullRedOverlay').style.display = "block"; 
+    document.getElementById('accessDeniedBox').style.display = "block";
+    document.getElementById('callAdminBtn').onclick = () => {
+      document.getElementById('adminPassModal').style.display = "flex";
+      document.getElementById('adminPassSubmit').onclick = () => {
+        const adminPassInput = document.getElementById('adminPassInput');
+        if (adminPassInput.value === "lfjc2025") {
+          document.getElementById('adminPassModal').style.display = "none";
+          document.getElementById('fullRedOverlay').style.display = "none"; 
+          document.getElementById('accessDeniedBox').style.display = "none";
+          startExam(studentKey);
+        } else alert("Incorrect password!");
+      };
+    };
+  } else startExam(studentKey);
+}
+
+function startExam(studentKey) {
+  // ensure key is loaded
+  if (!keyLoaded) {
+    alert('Answer key not loaded. Contact admin.');
+    return;
+  }
+
+  const stuName = document.getElementById('stuName');
+  const stuSection = document.getElementById('stuSection');
+  const stuRoll = document.getElementById('stuRoll');
+  const stuAdm = document.getElementById('stuAdm');
+
+  localStorage.setItem(studentKey, Date.now());
+  prepareExamData();
+  progress = {
+    answers: Array(examData.files.length).fill(null),
+    review: Array(examData.files.length).fill(false),
+    currentIndex: 0,
+    student: {name: stuName.value, sec: stuSection.value, roll: stuRoll.value, adm: stuAdm.value},
+    timeLeftSec: 5 * 60
+  };
+
+  document.getElementById('studentEntry').style.display = "none";
+  document.getElementById('examArea').style.display = "block";
+  
+  // START SECURITY MONITORING when exam begins
+  startSecurityMonitoring();
+  
+  renderQuestion(); renderPalette(); startTimer(); updateNavButtons();
+  debugLog('Exam started for student: ' + progress.student.name);
+}
+
+function startTimer() {
+  const timerEl = document.getElementById('timerEl');
+  const stuInfo = document.getElementById('stuInfo');
+  const stuQInfo = document.getElementById('stuQInfo');
+  const examHeader = document.getElementById('examHeader');
+  
+  timerInterval = setInterval(() => {
+    if (progress.timeLeftSec <= 0) { 
+        clearInterval(timerInterval); 
+        clearInterval(securityCheckInterval); // Stop security monitoring
+        submitExam(); 
+        return; 
+    }
+    progress.timeLeftSec--;
+    let m = Math.floor(progress.timeLeftSec / 60), s = progress.timeLeftSec % 60;
+    timerEl.textContent = `🕒 ${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+    stuInfo.textContent = `${progress.student.name} | ${progress.student.sec} | ${progress.student.roll} | ${progress.student.adm}`;
+    stuQInfo.textContent = `${examData.subjectNames[progress.currentIndex]} | Q ${progress.currentIndex + 1}/${examData.files.length}`;
+
+    if (progress.timeLeftSec <= 300 && progress.timeLeftSec > 60) {
+        timerEl.classList.add("blink");
+    } else { timerEl.classList.remove("blink"); }
+
+    if (progress.timeLeftSec <= 60) {
+        timerEl.classList.add("blink");
+        examHeader.classList.add("blinkLine");
+    } else {
+        examHeader.classList.remove("blinkLine");
+    }
+  }, 1000);
+}
+
+function renderQuestion() {
+  const i = progress.currentIndex;
+  const f = examData.files[i];
+  const questionContainer = document.getElementById('questionContainer');
+  
+  debugLog(`Rendering question ${i + 1}: ${f}`);
+  
+  let html = `<div class="question-info">
+                <div class="sectionTitle">${examData.subjectNames[i]} - Question ${i + 1}</div>
+              </div>`;
+  
+  // Enhanced image loading with multiple fallbacks
+  html += `
+    <div id="imageContainer${i}" style="margin:20px 0;">
+      <img src="${f}" class="questionImg" id="questionImg${i}"
+           onerror="handleImageError(${i})"
+           onload="handleImageLoad(${i})"
+           alt="Question ${i + 1}"
+           style="max-width:100%; max-height:500px; display:none;">
+      <div id="imageError${i}" class="question-error" style="display:none;">
+        <p>⚠️ Question image not available: ${f}</p>
+        <p>Trying alternative paths...</p>
+        <button onclick="tryAlternativeImage(${i})" style="margin:10px;">Try Alternative Path</button>
+        <p><strong>Please contact administrator if this persists</strong></p>
+      </div>
+      <div id="imageLoading${i}" style="display:block; padding:20px;">
+        <p>Loading question image...</p>
+        <div style="border:1px solid #4B0082; height:20px; width:200px; margin:10px auto;">
+          <div id="loadingBar${i}" style="height:100%; width:0%; background:#4B0082; transition:width 0.3s;"></div>
+        </div>
+      </div>
+    </div>`;
+  
+  html += `<br>`;
+  
+  questionContainer.innerHTML = html;
+  
+  // Add option buttons
+  const optsDiv = document.createElement("div");
+  optsDiv.style.marginTop = "50px";
+  ["A", "B", "C", "D"].forEach(opt => {
+    let b = document.createElement("button"); 
+    b.className = "optBtn"; 
+    b.style.margin = "0 40px";
+    b.textContent = opt;
+    if (progress.answers[i] === opt) b.classList.add("selected");
+    b.onclick = () => { 
+        progress.answers[i] = (progress.answers[i] === opt ? null : opt); 
+        renderPalette(); 
+        renderQuestion(); 
+    };
+    b.oncontextmenu = () => false;
+    optsDiv.appendChild(b);
+  });
+  questionContainer.appendChild(optsDiv);
+  
+  // Simulate loading progress
+  simulateLoading(i);
+}
+
+// Add these new functions for image handling
+function handleImageError(questionIndex) {
+  const img = document.getElementById(`questionImg${questionIndex}`);
+  const errorDiv = document.getElementById(`imageError${questionIndex}`);
+  const loadingDiv = document.getElementById(`imageLoading${questionIndex}`);
+  
+  debugLog(`Image failed to load: ${examData.files[questionIndex]}`);
+  
+  loadingDiv.style.display = 'none';
+  errorDiv.style.display = 'block';
+  img.style.display = 'none';
+}
+
+function handleImageLoad(questionIndex) {
+  const img = document.getElementById(`questionImg${questionIndex}`);
+  const errorDiv = document.getElementById(`imageError${questionIndex}`);
+  const loadingDiv = document.getElementById(`imageLoading${questionIndex}`);
+  
+  debugLog(`Image loaded successfully: ${examData.files[questionIndex]}`);
+  
+  loadingDiv.style.display = 'none';
+  errorDiv.style.display = 'none';
+  img.style.display = 'block';
+}
+
+function simulateLoading(questionIndex) {
+  let width = 0;
+  const interval = setInterval(() => {
+    width += 10;
+    const loadingBar = document.getElementById(`loadingBar${questionIndex}`);
+    if (loadingBar) {
+      loadingBar.style.width = width + '%';
+    }
+    if (width >= 100) {
+      clearInterval(interval);
+    }
+  }, 100);
+}
+
+function tryAlternativeImage(questionIndex) {
+    const currentPath = examData.files[questionIndex];
+    
+    // Try different alternative paths - prioritize simple numbers
+    const alternatives = [
+        `${questionIndex + 1}.png`,  // 1.png, 2.png, etc.
+        `Questions/${questionIndex + 1}.png`,
+        `questions/${questionIndex + 1}.png`,
+        `Images/${questionIndex + 1}.png`,
+        `images/${questionIndex + 1}.png`,
+        `Q${questionIndex + 1}.png`, // Fallback to Q-prefix
+        `Questions/Q${questionIndex + 1}.png`
+    ];
+    
+    let tried = 0;
+    const tryNext = () => {
+        if (tried >= alternatives.length) {
+            debugLog(`All alternative paths failed for question ${questionIndex + 1}`);
+            return;
+        }
+        
+        const altPath = alternatives[tried];
+        debugLog(`Trying alternative path: ${altPath}`);
+        
+        const testImg = new Image();
+        testImg.onload = function() {
+            // Found a working path!
+            examData.files[questionIndex] = altPath;
+            debugLog(`✓ Found working path: ${altPath}`);
+            renderQuestion(); // Re-render with new path
+        };
+        testImg.onerror = function() {
+            debugLog(`✗ Failed: ${altPath}`);
+            tried++;
+            tryNext();
+        };
+        testImg.src = altPath;
+    };
+    
+    tryNext();
+}
+
+document.getElementById('prevBtn').onclick = () => { 
+  if (progress.currentIndex > 0) { 
+    progress.currentIndex--; 
+    renderQuestion(); 
+    renderPalette(); 
+    updateNavButtons(); 
+  } 
+};
+
+document.getElementById('nextBtn').onclick = () => { 
+  if (progress.currentIndex < examData.files.length - 1) { 
+    progress.currentIndex++; 
+    renderQuestion(); 
+    renderPalette(); 
+    updateNavButtons(); 
+  } 
+};
+
+document.getElementById('markReviewBtn').onclick = () => { 
+  progress.review[progress.currentIndex] = !progress.review[progress.currentIndex]; 
+  document.getElementById('markReviewBtn').textContent = progress.review[progress.currentIndex] ? "Unreview" : "Review"; 
+  renderPalette(); 
+};
+
+document.getElementById('submitBtn').onclick = () => showConfirm("Submit Exam?", x => { if (x) submitExam(); });
+
+function updateNavButtons() {
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const markReviewBtn = document.getElementById('markReviewBtn');
+  
+  prevBtn.style.display = progress.currentIndex === 0 ? "none" : "inline-block";
+  nextBtn.style.display = progress.currentIndex === examData.files.length - 1 ? "none" : "inline-block";
+  markReviewBtn.textContent = progress.review[progress.currentIndex] ? "Unreview" : "Review";
+}
+
+function renderPalette() {
+  const paletteContainer = document.getElementById('paletteContainer');
+  paletteContainer.innerHTML = "";
+  paletteContainer.style.display = "grid";                          
+  paletteContainer.style.gridTemplateColumns = "repeat(20, 1fr)";  
+  paletteContainer.style.gap = "6px";                              
+
+  progress.answers.forEach((ans, i) => {
+    const b = document.createElement("button"); 
+    b.textContent = i + 1;
+    if (progress.review[i]) b.classList.add("reviewed");
+    if (i === progress.currentIndex) b.classList.add("current");
+    if (ans) b.classList.add("selected");
+    b.onclick = () => { progress.currentIndex = i; renderQuestion(); renderPalette(); updateNavButtons(); };
+    b.oncontextmenu = () => false;
+    paletteContainer.appendChild(b);
+  });
+}
+
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden && progress) {
+    logSecurityViolation('Tab/window switch detected');
+    submitExam();
+  }
+});
+
+function submitExam() {
+  clearInterval(timerInterval);
+  clearInterval(securityCheckInterval); // Stop security monitoring
+  
+  const subjData = {};
+  examData.subjectNames.forEach((s, i) => {
+    if (!subjData[s]) subjData[s] = {correct: 0, wrong: 0, blank: 0, total: 0};
+    const ans = progress.answers[i];
+    if (ans === null) subjData[s].blank++;
+    else if (ans === examData.keys[i]) subjData[s].correct++;
+    else subjData[s].wrong++;
+    subjData[s].total++;
+  });
+
+  // Send ALL SUBJECTS DATA TOGETHER in ONE REQUEST
+  sendAllSubjectsToGoogleSheet(subjData);
+
+  const examArea = document.getElementById('examArea');
+  let html = `<h2 style="color:#4B0082;">🎉 Congratulations, ${progress.student.name}!</h2>
+  <div><b>Section:</b> ${progress.student.sec} | <b>Roll:</b> ${progress.student.roll} | <b>Admission No:</b> ${progress.student.adm}</div>`;
+  
+  // Show security violations if any
+  if (securityViolations > 0) {
+    html += `<div style="color:red; font-weight:bold; margin:10px 0;">
+      ⚠️ Security Violations Detected: ${securityViolations}
+    </div>`;
+  }
+  
+  html += `<br>
+  <div style="overflow-x:auto;display:flex;justify-content:center;width:100%;">
+  <table class="results-table" border="1">
+  <tr style="background:#E6E6FA;">
+    <th>Subject</th><th>Correct</th><th>Wrong</th><th>Blank</th><th>Total</th><th>Percentage</th>
+  </tr>`;
+
+  let totalCorrect = 0, totalWrong = 0, totalBlank = 0, totalQs = 0;
+
+  for (let s in subjData) {
+    let v = subjData[s];
+    let per = ((v.correct / v.total) * 100).toFixed(2);
+    totalCorrect += v.correct; totalWrong += v.wrong; totalBlank += v.blank; totalQs += v.total;
+    html += `<tr><td>${s}</td><td>${v.correct}</td><td>${v.wrong}</td><td>${v.blank}</td><td>${v.total}</td><td>${per}%</td></tr>`;
+  }
+
+  let totalPer = ((totalCorrect / totalQs) * 100).toFixed(2);
+
+  html += `<tr style="font-weight:bold;background:#D8BFD8;">
+    <td>Total</td><td>${totalCorrect}</td><td>${totalWrong}</td><td>${totalBlank}</td><td>${totalQs}</td><td>${totalPer}%</td>
+  </tr></table></div><br>
+  <div style="margin:20px;">
+    <button id="logoutBtn" class="glow" style="font-size:20px;padding:15px 30px;">Logout</button>
+  </div>`;
+
+  examArea.innerHTML = html;
+  document.getElementById('logoutBtn').onclick = () => window.close();
+  debugLog('Exam submitted and results calculated');
+}
+
+// Debug panel toggle
+document.getElementById('debugToggle').addEventListener('click', function() {
+  const debugPanel = document.getElementById('debugPanel');
+  debugPanel.style.display = debugPanel.style.display === 'none' ? 'block' : 'none';
+});
+
+// Initialize security features
+debugLog('High security features initialized');
+
+// Temporary test to verify images
+window.addEventListener('load', function() {
+    // Test if images are accessible
+    setTimeout(() => {
+        debugLog('Testing image accessibility...');
+        if (images.length > 0) {
+            const testImg = new Image();
+            testImg.onload = () => debugLog(`First image loads: ${images[0]}`);
+            testImg.onerror = () => debugLog(`First image fails: ${images[0]}`);
+            testImg.src = images[0];
+        }
+    }, 1000);
+});
+</script>
+
+</body>
+</html>
