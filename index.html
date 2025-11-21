@@ -996,57 +996,107 @@ let progress = null, timerInterval = null;
 
 // TEST DATA - Remove this in production and use the fetch below
 function initializeTestData() {
-    // Create test answer key (30 questions)
-    answerKey = [
-        'A', 'B', 'C', 'D', 'A', 'B', 'C', 'D', 'A', 'B',
-        'C', 'D', 'A', 'B', 'C', 'D', 'A', 'B', 'C', 'D',
-        'A', 'B', 'C', 'D', 'A', 'B', 'C', 'D', 'A', 'B'
-    ];
+    // Create test answer key (40 questions) in 5-per-line format
+    // This simulates what your key file should look like
+    const testKeyFormat = [
+        "ABCDA", // Line 1: Q1-A, Q2-B, Q3-C, Q4-D, Q5-A
+        "BCDAB", // Line 2: Q6-B, Q7-C, Q8-D, Q9-A, Q10-B
+        "CDABC", // Line 3: Q11-C, Q12-D, Q13-A, Q14-B, Q15-C
+        "DABCD", // Line 4: Q16-D, Q17-A, Q18-B, Q19-C, Q20-D
+        "ABCDA", // Line 5
+        "BCDAB", // Line 6  
+        "CDABC", // Line 7
+        "DABCD"  // Line 8 (total 40 questions)
+    ].join('\n');
+    
+    // Parse the test format to create answerKey array
+    answerKey = [];
+    testKeyFormat.split('\n').forEach(line => {
+        const cleanLine = line.trim();
+        if (cleanLine.length > 0) {
+            const lineAnswers = cleanLine.split('');
+            const validAnswers = lineAnswers.filter(val => 
+                ['A', 'B', 'C', 'D'].includes(val.toUpperCase())
+            ).map(val => val.toUpperCase());
+            answerKey = answerKey.concat(validAnswers);
+        }
+    });
     
     // Create test image paths
-    for (let i = 1; i <= 30; i++) {
+    images = [];
+    for (let i = 1; i <= answerKey.length; i++) {
         images.push(`questions/Q${i}.png`);
     }
     
     keyLoaded = true;
-    document.getElementById('keyStatus').textContent = 'Test data loaded (' + answerKey.length + ' questions).';
+    document.getElementById('keyStatus').textContent = `Test data loaded (${answerKey.length} questions in 5-per-line format).`;
     validateStudentInputs();
-    debugLog('Test data initialized successfully');
+    debugLog(`Test data initialized with ${answerKey.length} questions`);
     
     // Also try to load from server
     loadAnswerKeyFromServer();
 }
 
 // Fetch the answer key file from Answers/Key on page load
-function loadAnswerKeyFromServer() {
+  function loadAnswerKeyFromServer() {
     fetch('Answers/Key')
       .then(res => {
         if (!res.ok) throw new Error('Key file not found or not accessible');
         return res.text();
       })
       .then(text => {
-        // Expecting answers in format: A B C D A B C D...
-        answerKey = text.trim().split(/\s+/);
+        console.log('Raw key file content:', text);
+        
+        // NEW: Parse 5 answers per line without gaps (e.g., "ABCDA")
+        let answers = [];
+        const lines = text.trim().split('\n');
+        
+        lines.forEach(line => {
+            const cleanLine = line.trim();
+            if (cleanLine.length > 0) {
+                // Split the line into individual characters
+                const lineAnswers = cleanLine.split('');
+                // Filter only valid answer options (A, B, C, D)
+                const validAnswers = lineAnswers.filter(val => 
+                    ['A', 'B', 'C', 'D'].includes(val.toUpperCase())
+                ).map(val => val.toUpperCase());
+                
+                answers = answers.concat(validAnswers);
+            }
+        });
+        
+        console.log('Parsed answers (5 per line):', answers);
+        console.log('Total questions found:', answers.length);
+        
+        if (answers.length === 0) {
+            throw new Error('No valid answers found in key file');
+        }
+        
+        answerKey = answers;
         
         // Build image paths automatically based on key length
         images = [];
         for (let i = 1; i <= answerKey.length; i++) {
-          images.push(`questions/${i}.png`);
+          images.push(`questions/Q${i}.png`);
         }
         
         keyLoaded = true;
-        document.getElementById('keyStatus').textContent = 'Answer key loaded (' + answerKey.length + ' items).';
+        document.getElementById('keyStatus').textContent = `Answer key loaded (${answerKey.length} questions).`;
         validateStudentInputs();
-        console.log('Loaded answer key:', answerKey);
-        debugLog('Answer key loaded successfully from server');
+        debugLog(`Answer key loaded successfully: ${answerKey.length} questions`);
+        
+        // Update debug info
+        debugLog(`Answer key format: 5 per line without gaps`);
+        debugLog(`First 10 answers: ${answerKey.slice(0, 10).join(', ')}`);
+        debugLog(`Last 10 answers: ${answerKey.slice(-10).join(', ')}`);
       })
       .catch(err => {
         console.error('Failed to load Answers/Key:', err);
         debugLog(`Error loading answer key: ${err.message}`);
         // Keep using test data if server load fails
+        document.getElementById('keyStatus').textContent = 'Using test data - Server key failed to load';
       });
 }
-
 // Initialize with test data immediately, then try server
 initializeTestData();
 
