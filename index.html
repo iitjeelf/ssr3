@@ -1023,10 +1023,20 @@ function initializeTestData() {
     });
     
     // Create test image paths
-    images = [];
-    for (let i = 1; i <= answerKey.length; i++) {
-        images.push(`questions/Q${i}.png`);
-    }
+    // Build image paths automatically based on key length
+images = [];
+for (let i = 1; i <= answerKey.length; i++) {
+  // Try multiple possible file naming patterns
+  const possiblePaths = [
+    `questions/Q${i}.png`,
+    `questions/${i}.png`,
+    `questions/question${i}.png`,
+    `questions/Question${i}.png`,
+    `Q${i}.png`,
+    `${i}.png`
+  ];
+  images.push(possiblePaths[0]); // Use the first pattern as default
+}
     
     keyLoaded = true;
     document.getElementById('keyStatus').textContent = `Test data loaded (${answerKey.length} questions in 5-per-line format).`;
@@ -1075,10 +1085,20 @@ function initializeTestData() {
         answerKey = answers;
         
         // Build image paths automatically based on key length
-        images = [];
-        for (let i = 1; i <= answerKey.length; i++) {
-          images.push(`questions/Q${i}.png`);
-        }
+        // Create test image paths
+images = [];
+for (let i = 1; i <= answerKey.length; i++) {
+    // Try multiple possible file naming patterns
+    const possiblePaths = [
+        `questions/Q${i}.png`,
+        `questions/${i}.png`,
+        `questions/question${i}.png`,
+        `questions/Question${i}.png`,
+        `Q${i}.png`,
+        `${i}.png`
+    ];
+    images.push(possiblePaths[0]); // Use the first pattern as default
+}
         
         keyLoaded = true;
         document.getElementById('keyStatus').textContent = `Answer key loaded (${answerKey.length} questions).`;
